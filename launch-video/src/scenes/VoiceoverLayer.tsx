@@ -7,36 +7,37 @@ interface VoiceoverLine {
   endFrame: number;
 }
 
+// Timing matches LaunchVideo.tsx scene boundaries
 const VOICEOVER_SCRIPT: VoiceoverLine[] = [
   {
-    text: "Are you still posting boring LinkedIn content that NOBODY reads?",
+    text: "Stop posting boring LinkedIn content.",
     startFrame: 0,
-    endFrame: 90,
+    endFrame: 150, // hook scene
   },
   {
-    text: "Your posts get 3 likes. Your mom. Your cousin. Your auto-follow bot.",
-    startFrame: 90,
-    endFrame: 210,
+    text: "Your posts get 3 likes. Your mom. Your cousin. Your bot.",
+    startFrame: 141,
+    endFrame: 366, // problem scene
   },
   {
-    text: "Introducing Handle My LinkedIn, your AI-powered viral content engine.",
-    startFrame: 210,
-    endFrame: 330,
+    text: "Handle My LinkedIn. Your AI viral content engine.",
+    startFrame: 357,
+    endFrame: 567, // reveal scene
   },
   {
-    text: "Pick your domain. Hit generate. Watch AI craft 5 killer hooks, a full post, carousel slides, and a virality score, in seconds.",
-    startFrame: 330,
-    endFrame: 570,
+    text: "Pick your domain. Hit generate. Get 5 hooks, a full post, and a virality score in seconds.",
+    startFrame: 558,
+    endFrame: 783, // demo scene
   },
   {
-    text: "Main Bhanu Pratap Singh, and I say, this app should be declared ESSENTIAL SERVICE! 5 hooks! CAROUSEL! Even my speechwriter is jealous!",
-    startFrame: 570,
-    endFrame: 750,
+    text: "This app should be declared ESSENTIAL SERVICE!",
+    startFrame: 774,
+    endFrame: 984, // endorse scene
   },
   {
-    text: "Handle My LinkedIn. Your persona, our speed. Try it free today.",
-    startFrame: 750,
-    endFrame: 900,
+    text: "Handle My LinkedIn. Try it free today.",
+    startFrame: 975,
+    endFrame: 1170, // cta scene
   },
 ];
 
@@ -44,10 +45,9 @@ export const VoiceoverLayer: React.FC = () => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const synthRef = useRef<SpeechSynthesis | null>(null);
-  const activeUtteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const spokenFramesRef = useRef<Set<number>>(new Set());
   const [isPlaying, setIsPlaying] = useState(false);
-  const [currentLine, setCurrentLine] = useState<string>("");
+  const [currentLine, setCurrentLine] = useState("");
 
   useEffect(() => {
     if (typeof window === "undefined") return;
@@ -61,34 +61,27 @@ export const VoiceoverLayer: React.FC = () => {
     const synth = synthRef.current;
     if (!synth) return;
 
-    // Find which line should be playing at this frame
     const activeLine = VOICEOVER_SCRIPT.find(
       (line) => frame >= line.startFrame && frame < line.endFrame
     );
 
     if (activeLine) {
-      // Create a key for this line's start frame to avoid re-speaking
       const lineKey = activeLine.startFrame;
 
       if (!spokenFramesRef.current.has(lineKey)) {
-        // Cancel any ongoing speech
         synth.cancel();
-
-        // Create new utterance
         const utterance = new SpeechSynthesisUtterance(activeLine.text);
         utterance.rate = 1.05;
         utterance.pitch = 1.0;
         utterance.volume = 1.0;
 
-        // Pick a good English voice
         const voices = synth.getVoices();
         const preferred = voices.find(
           (v) =>
             v.lang.startsWith("en") &&
             (v.name.includes("Google") ||
               v.name.includes("Microsoft") ||
-              v.name.includes("Samantha") ||
-              v.name.includes("Daniel"))
+              v.name.includes("Samantha"))
         );
         if (preferred) utterance.voice = preferred;
 
@@ -106,11 +99,9 @@ export const VoiceoverLayer: React.FC = () => {
         };
 
         spokenFramesRef.current.add(lineKey);
-        activeUtteranceRef.current = utterance;
         synth.speak(utterance);
       }
     } else {
-      // Between lines — cancel any lingering speech
       if (synth.speaking) {
         synth.cancel();
         setIsPlaying(false);
@@ -119,14 +110,11 @@ export const VoiceoverLayer: React.FC = () => {
     }
   }, [frame]);
 
-  // Format time display
   const seconds = (frame / fps).toFixed(1);
   const activeLine = VOICEOVER_SCRIPT.find(
     (l) => frame >= l.startFrame && frame < l.endFrame
   );
-  const lineNum = activeLine
-    ? VOICEOVER_SCRIPT.indexOf(activeLine) + 1
-    : 0;
+  const lineNum = activeLine ? VOICEOVER_SCRIPT.indexOf(activeLine) + 1 : 0;
 
   return (
     <div
@@ -157,7 +145,6 @@ export const VoiceoverLayer: React.FC = () => {
             : "1px solid rgba(255,255,255,0.15)",
         }}
       >
-        {/* Mic icon */}
         <div
           style={{
             width: 28,
@@ -168,12 +155,10 @@ export const VoiceoverLayer: React.FC = () => {
             alignItems: "center",
             justifyContent: "center",
             fontSize: 14,
-            transition: "background 0.2s",
           }}
         >
           {isPlaying ? "🎤" : "🔇"}
         </div>
-
         <div>
           <div
             style={{
@@ -194,43 +179,27 @@ export const VoiceoverLayer: React.FC = () => {
               marginTop: 1,
             }}
           >
-            {lineNum > 0
-              ? `Line ${lineNum}/6 • ${seconds}s`
-              : `Preview • ${seconds}s`}
+            {lineNum > 0 ? `Line ${lineNum}/6 • ${seconds}s` : `Preview • ${seconds}s`}
           </div>
         </div>
-
-        {/* Audio bars animation */}
         {isPlaying && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 2,
-              marginLeft: 8,
-            }}
-          >
-            {[0, 1, 2, 3, 4].map((i) => {
-              const height =
-                8 + Math.sin((frame * 0.3) + i * 1.2) * 6;
-              return (
-                <div
-                  key={i}
-                  style={{
-                    width: 3,
-                    height: Math.max(4, height),
-                    borderRadius: 2,
-                    background: "#4ADE80",
-                    transition: "height 0.1s",
-                  }}
-                />
-              );
-            })}
+          <div style={{ display: "flex", alignItems: "center", gap: 2, marginLeft: 8 }}>
+            {[0, 1, 2, 3, 4].map((i) => (
+              <div
+                key={i}
+                style={{
+                  width: 3,
+                  height: Math.max(4, 8 + Math.sin(frame * 0.3 + i * 1.2) * 6),
+                  borderRadius: 2,
+                  background: "#4ADE80",
+                }}
+              />
+            ))}
           </div>
         )}
       </div>
 
-      {/* Current line subtitle */}
+      {/* Subtitle */}
       {currentLine && (
         <div
           style={{
