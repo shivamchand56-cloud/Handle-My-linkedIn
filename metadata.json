@@ -1,0 +1,10 @@
+{
+  "name": "Handle My LinkedIn",
+  "description": "Autonomous LinkedIn thought leadership and domain authority engine with 30/60/90-day campaign calendar sprints, instant viral post architects, interactive carousel slide makers, and 2026 algorithm optimization.",
+  "requestFramePermissions": [
+    "microphone"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
