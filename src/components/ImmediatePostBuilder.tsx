@@ -394,20 +394,28 @@ export const ImmediatePostBuilder: React.FC<ImmediatePostBuilderProps> = ({
                 Authority Posture
               </label>
               <div className="grid grid-cols-2 gap-1">
-                {(['rookie', 'expert'] as ExperienceLevel[]).map((lvl) => (
-                  <button
-                    key={lvl}
-                    type="button"
-                    onClick={() => setSelectedLevel && setSelectedLevel(lvl)}
-                    className={`py-1.5 text-center text-xs font-bold rounded border transition ${
-                      selectedLevel === lvl
-                        ? 'bg-[#0077B5] text-white border-[#0077B5] shadow-2xs'
-                        : 'bg-[#F8F9FA] text-[#555555] border-[#E0DFDC] hover:bg-white'
-                    }`}
-                  >
-                    {lvl === 'rookie' ? 'Learner / Rookie' : 'Proven Operator'}
-                  </button>
-                ))}
+                {(['rookie', 'amateur', 'expert', 'professional'] as ExperienceLevel[]).map((lvl) => {
+                  const labels: Record<ExperienceLevel, string> = {
+                    rookie: 'Rookie',
+                    amateur: 'Amateur',
+                    expert: 'Expert',
+                    professional: 'Veteran',
+                  };
+                  return (
+                    <button
+                      key={lvl}
+                      type="button"
+                      onClick={() => setSelectedLevel && setSelectedLevel(lvl)}
+                      className={`py-1.5 text-center text-[11px] font-bold rounded border transition ${
+                        selectedLevel === lvl
+                          ? 'bg-[#0077B5] text-white border-[#0077B5] shadow-2xs'
+                          : 'bg-[#F8F9FA] text-[#555555] border-[#E0DFDC] hover:bg-white'
+                      }`}
+                    >
+                      {labels[lvl]}
+                    </button>
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -693,15 +701,13 @@ export const ImmediatePostBuilder: React.FC<ImmediatePostBuilderProps> = ({
               authorHeadline={authorHeadline}
               topic={generatedPost.topic}
             />
-          )}
-
-          {/* Tab View 3: Algorithm Virality Audit */}
-          {activeView === 'algorithm' && (
-            <AlgorithmScorecard
-              advice={generatedPost.algorithmAdvice}
-              postLength={generatedPost.content.length}
-            />
-          )}
+          )}            {/* Tab View 3: Algorithm Virality Audit */}
+            {activeView === 'algorithm' && (
+              <AlgorithmScorecard
+                algorithmAdvice={generatedPost.algorithmAdvice}
+                domainName={domainDisplayName}
+              />
+            )}
         </div>
       )}
     </div>

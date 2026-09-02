@@ -246,6 +246,10 @@ export default function App() {
                   <span className="w-4 h-4 rounded-full bg-[#0077B5] text-white font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">4</span>
                   <span><strong>AI processes & suggests 5 best viral hooks</strong></span>
                 </div>
+                <div className="flex items-start gap-1.5">
+                  <span className="w-4 h-4 rounded-full bg-[#057642] text-white font-bold text-[9px] flex items-center justify-center shrink-0 mt-0.5">5</span>
+                  <span><strong>Preview in feed & copy to LinkedIn</strong></span>
+                </div>
               </div>
             </div>
           </aside>
@@ -370,6 +374,7 @@ export default function App() {
         setAuthorName={setAuthorName}
         authorHeadline={authorHeadline}
         setAuthorHeadline={setAuthorHeadline}
+        domainName={domainDisplayName}
       />
     </div>
   );

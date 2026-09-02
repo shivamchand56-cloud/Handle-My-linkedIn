@@ -26,6 +26,7 @@ interface LinkedInFeedPreviewProps {
   onUpdateContent?: (newContent: string) => void;
   onOpenCarouselModal?: () => void;
   onImprovePost?: (goal: string) => void;
+  onSwapHook?: (newHook: string) => void;
   isImproving?: boolean;
 }
 
@@ -34,6 +35,7 @@ export const LinkedInFeedPreview: React.FC<LinkedInFeedPreviewProps> = ({
   onUpdateContent,
   onOpenCarouselModal,
   onImprovePost,
+  onSwapHook,
   isImproving = false,
 }) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -102,7 +104,7 @@ export const LinkedInFeedPreview: React.FC<LinkedInFeedPreviewProps> = ({
           <span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${
             isOptimalLength ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-800'
           }`}>
-            {charCount} chars • {wordCount} words
+            {charCount} chars • {wordCount} words {!isOptimalLength && charCount < 800 && '(add more for algorithm boost)'}
           </span>
         </div>
 
@@ -355,7 +357,8 @@ export const LinkedInFeedPreview: React.FC<LinkedInFeedPreviewProps> = ({
                   const restOfPost = editableContent.split('\n\n').slice(1).join('\n\n');
                   const updated = `${altHook}\n\n${restOfPost}`;
                   setEditableContent(updated);
-                  if (onUpdateContent) onUpdateContent(updated);
+                  if (onSwapHook) onSwapHook(altHook);
+                  else if (onUpdateContent) onUpdateContent(updated);
                 }}
                 className="text-left p-2 bg-[#FAF9F7] hover:bg-[#EDF3F8] border border-[#EBEBEB] hover:border-[#0077B5] rounded text-xs text-[#191919] transition group"
               >

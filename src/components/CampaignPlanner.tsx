@@ -500,6 +500,21 @@ export const CampaignPlanner: React.FC<CampaignPlannerProps> = ({
             {/* Export Actions */}
             <div className="flex items-center space-x-2">
               <button
+                onClick={() => {
+                  const allPosts = campaign.days.map((d, i) =>
+                    `--- Day ${d.day} (${d.dateStr}) ---\n${d.fullPost}\n\n${d.hashtags.join(' ')}`
+                  ).join('\n\n\n');
+                  navigator.clipboard.writeText(allPosts);
+                  setCopiedAll(true);
+                  setTimeout(() => setCopiedAll(false), 2500);
+                }}
+                className="px-3 py-1.5 bg-[#0077B5] hover:bg-[#004182] text-white rounded-md text-xs font-bold border border-[#0077B5] flex items-center gap-1.5 transition cursor-pointer shadow-2xs"
+                title="Copy all campaign posts to clipboard"
+              >
+                {copiedAll ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedAll ? 'All Copied!' : 'Copy All Posts'}</span>
+              </button>
+              <button
                 onClick={handleExportCSV}
                 className="px-3 py-1.5 bg-[#F3F2EF] hover:bg-[#E8E7E3] text-[#191919] rounded-md text-xs font-semibold border border-[#E0DFDC] flex items-center gap-1.5 transition cursor-pointer"
                 title="Export as CSV for Google Sheets / Notion"
